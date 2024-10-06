@@ -911,8 +911,8 @@ String.prototype.encode_uri_component = function () {
 String.prototype.decode_uri_component = function () {
     return decodeURIComponent(this);
 };
-String.prototype.leave_only_digits = function () {
-    return this.replace(/\D/g, '');
+String.prototype.is_whitespace = function () {
+    return /\s/.test(this);
 };
 
 var CoreExtensions;

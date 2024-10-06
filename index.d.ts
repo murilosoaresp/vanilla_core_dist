@@ -237,7 +237,7 @@ declare global {
         to_number_or(or_value: number): number;
         encode_uri_component(): string;
         decode_uri_component(): string;
-        leave_only_digits(): string;
+        is_whitespace(): boolean;
     }
 }
 
