@@ -924,6 +924,17 @@ String.prototype.is_whitespace = function () {
 String.prototype.is_newline = function () {
     return /\n/.test(this);
 };
+String.prototype.is_digit = function () {
+    const char_code = this.charCodeAt(0);
+    return char_code >= 48 && char_code <= 57;
+};
+String.prototype.is_letter = function () {
+    const char_code = this.charCodeAt(0);
+    return (char_code >= 65 && char_code <= 90) || (char_code >= 97 && char_code <= 122);
+};
+String.prototype.is_alphanumeric = function () {
+    return this.is_digit() || this.is_letter();
+};
 
 var CoreExtensions;
 (function (CoreExtensions) {

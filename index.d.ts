@@ -240,6 +240,9 @@ declare global {
         decode_uri_component(): string;
         is_whitespace(): boolean;
         is_newline(): boolean;
+        is_digit(): boolean;
+        is_letter(): boolean;
+        is_alphanumeric(): boolean;
     }
 }
 
