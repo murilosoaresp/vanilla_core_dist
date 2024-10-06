@@ -224,14 +224,14 @@ class List {
             return Opt.none();
         }
     }
-    slice(start, end) {
+    range(start, end) {
         let output = new List();
-        for (let i = 0; i <= end; i++) {
+        for (let i = start; i <= end; i++) {
             output._push(this.get(i));
         }
         return output;
     }
-    _splice(start, end) {
+    _slice(start, end) {
         let array_removed = this.inner_array.splice(start, end - start + 1);
         return List.of(array_removed);
     }
