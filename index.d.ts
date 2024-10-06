@@ -48,6 +48,7 @@ declare class List<T> {
     _pop(): Opt<T>;
     _swap(index_a: number, index_b: number): void;
     _swap_pop(index: number): Opt<T>;
+    slice(start: number, end: number): List<T>;
     _splice(start: number, end: number): List<T>;
     iter(): Generator<T>;
     enumerate(): Generator<{
