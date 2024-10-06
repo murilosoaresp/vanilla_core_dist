@@ -238,6 +238,7 @@ declare global {
         encode_uri_component(): string;
         decode_uri_component(): string;
         is_whitespace(): boolean;
+        is_newline(): boolean;
     }
 }
 

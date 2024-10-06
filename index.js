@@ -914,6 +914,9 @@ String.prototype.decode_uri_component = function () {
 String.prototype.is_whitespace = function () {
     return /\s/.test(this);
 };
+String.prototype.is_newline = function () {
+    return /\n/.test(this);
+};
 
 var CoreExtensions;
 (function (CoreExtensions) {
