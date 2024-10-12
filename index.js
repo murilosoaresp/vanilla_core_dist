@@ -964,6 +964,8 @@ function exaustive_switch(_) {
 var Log;
 (function (Log) {
     function json(x, n) {
+        let shift = n ?? 2;
+        console.log(JSON.stringify(x, null, shift));
     }
     Log.json = json;
 })(Log || (Log = {}));
