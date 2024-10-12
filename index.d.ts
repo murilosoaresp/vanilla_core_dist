@@ -254,6 +254,10 @@ declare class IdGen {
 
 declare function exaustive_switch(_: never): never;
 
+declare namespace Log {
+    function json(x: any, n?: number): void;
+}
+
 declare namespace PathUtils {
     function remove_last_extension(filename: string): string;
 }
@@ -315,4 +319,4 @@ declare class WebWorker<Input, Output> {
     run(input: Input): Promise<Output>;
 }
 
-export { CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, TreeHashMap, TreeHashMapMulti, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
+export { CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, TreeHashMap, TreeHashMapMulti, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };

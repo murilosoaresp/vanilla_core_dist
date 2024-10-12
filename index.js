@@ -961,6 +961,13 @@ function exaustive_switch(_) {
     throw new Error("Didn't expect to get here");
 }
 
+var Log;
+(function (Log) {
+    function json(x, n) {
+    }
+    Log.json = json;
+})(Log || (Log = {}));
+
 var PathUtils;
 (function (PathUtils) {
     function remove_last_extension(filename) {
@@ -1147,4 +1154,4 @@ class WebWorker {
     }
 }
 
-export { CoreExtensions, DateExtensions, HashMap, HashSet, IdGen, List, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, TreeHashMap, TreeHashMapMulti, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
+export { CoreExtensions, DateExtensions, HashMap, HashSet, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, TreeHashMap, TreeHashMapMulti, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
