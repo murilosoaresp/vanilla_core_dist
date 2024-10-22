@@ -269,6 +269,17 @@ class IdGen {
     }
 }
 
+class AlRect2D {
+    center;
+    width;
+    height;
+    constructor(center, width, height) {
+        this.center = center;
+        this.width = width;
+        this.height = height;
+    }
+}
+
 class Vec2D {
     x;
     y;
@@ -290,6 +301,23 @@ class Vec2D {
     }
     plus(other) {
         return new Vec2D(this.x + other.x, this.y + other.y);
+    }
+    flip_y() {
+        return new Vec2D(this.x, -this.y);
+    }
+}
+
+class UiAlRect {
+    tl_vec;
+    width;
+    height;
+    constructor(tl_vec, width, height) {
+        this.tl_vec = tl_vec;
+        this.width = width;
+        this.height = height;
+    }
+    center() {
+        return new Vec2D(this.tl_vec.x + 0.5 * this.width, this.tl_vec.y + 0.5 * this.height);
     }
 }
 
@@ -522,4 +550,4 @@ class WebWorker {
     }
 }
 
-export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, Vec2D, WebWorker, exaustive_switch, sleep };
+export { AlRect2D, Color, CoreExtensions, DateExtensions, HashMap, HashSet, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UiAlRect, UniqueHashGenerator, Vec2D, WebWorker, exaustive_switch, sleep };

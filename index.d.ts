@@ -113,6 +113,22 @@ declare class Vec2D {
     shift_to(target: Vec2D): Vec2D;
     norm(): number;
     plus(other: Vec2D): Vec2D;
+    flip_y(): Vec2D;
+}
+
+declare class AlRect2D {
+    center: Vec2D;
+    width: number;
+    height: number;
+    constructor(center: Vec2D, width: number, height: number);
+}
+
+declare class UiAlRect {
+    tl_vec: Vec2D;
+    width: number;
+    height: number;
+    constructor(tl_vec: Vec2D, width: number, height: number);
+    center(): Vec2D;
 }
 
 declare class Color {
@@ -191,4 +207,4 @@ declare class WebWorker<Input, Output> {
     run(input: Input): Promise<Output>;
 }
 
-export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, Vec2D, WebWorker, exaustive_switch, sleep };
+export { AlRect2D, Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UiAlRect, UniqueHashGenerator, Vec2D, WebWorker, exaustive_switch, sleep };
