@@ -52,6 +52,22 @@ class Opt {
     }
 }
 
+class HashSet {
+    inner;
+    constructor() {
+        this.inner = new HashMap();
+    }
+    insert(hash) {
+        this.inner.insert(hash, null);
+    }
+    remove(hash) {
+        this.inner.remove(hash);
+    }
+    contains(hash) {
+        return this.inner.contains_hash(hash);
+    }
+}
+
 class List {
     inner;
     constructor() {
@@ -62,6 +78,7 @@ class List {
         isntance.inner = array;
         return isntance;
     }
+    get_inner() { return this.inner; }
     len() {
         return this.inner.length;
     }
@@ -94,6 +111,19 @@ class List {
         for (let value of this.iter()) {
             output.push(fn(value));
         }
+        return output;
+    }
+    async map_async_all(fn) {
+        let output = new List();
+        for (let value of this.iter()) {
+            output.push(fn(value));
+        }
+        let promise_all = await Promise.all(output.inner);
+        return List.of(promise_all);
+    }
+    to_hash_set(fn) {
+        let output = new HashSet();
+        this.for_each(t => output.insert(fn(t)));
         return output;
     }
     join(sep) {
@@ -140,22 +170,6 @@ class HashMap {
             output.push({ hash, value: this.inner[hash] });
         }
         return output;
-    }
-}
-
-class HashSet {
-    inner;
-    constructor() {
-        this.inner = new HashMap();
-    }
-    insert(hash) {
-        this.inner.insert(hash, null);
-    }
-    remove(hash) {
-        this.inner.remove(hash);
-    }
-    contains(hash) {
-        return this.inner.contains_hash(hash);
     }
 }
 
@@ -274,17 +288,6 @@ class IdGen {
     }
 }
 
-class AlRect2D {
-    center;
-    width;
-    height;
-    constructor(center, width, height) {
-        this.center = center;
-        this.width = width;
-        this.height = height;
-    }
-}
-
 class Vec2D {
     x;
     y;
@@ -294,6 +297,9 @@ class Vec2D {
     }
     static zero() {
         return new Vec2D(0.0, 0.0);
+    }
+    static from_json(json) {
+        return new Vec2D(json.x, json.y);
     }
     clone() {
         return new Vec2D(this.x, this.y);
@@ -309,6 +315,33 @@ class Vec2D {
     }
     flip_y() {
         return new Vec2D(this.x, -this.y);
+    }
+    to_json() {
+        return {
+            x: this.x,
+            y: this.y,
+        };
+    }
+}
+
+class AlRect2D {
+    center;
+    width;
+    height;
+    constructor(center, width, height) {
+        this.center = center;
+        this.width = width;
+        this.height = height;
+    }
+    static from_json(json) {
+        return new AlRect2D(Vec2D.from_json(json.center), json.width, json.height);
+    }
+    to_json() {
+        return {
+            center: this.center.to_json(),
+            width: this.width,
+            height: this.height,
+        };
     }
 }
 

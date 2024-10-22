@@ -13,10 +13,19 @@ declare class Opt<T> {
     value_unchecked(): T;
 }
 
+declare class HashSet {
+    private inner;
+    constructor();
+    insert(hash: string): void;
+    remove(hash: string): void;
+    contains(hash: string): boolean;
+}
+
 declare class List<T> {
     private inner;
     constructor();
     static of<T>(array: T[]): List<T>;
+    get_inner(): T[];
     len(): number;
     is_valid_index(index: number): boolean;
     get(index: number): T;
@@ -25,6 +34,8 @@ declare class List<T> {
     iter(): Generator<T>;
     for_each(fn: (t: T) => void): void;
     map<G>(fn: (t: T) => G): List<G>;
+    map_async_all<G>(fn: (t: T) => Promise<G>): Promise<List<G>>;
+    to_hash_set(fn: (t: T) => string): HashSet;
     join(sep: string): string;
 }
 
@@ -45,14 +56,6 @@ declare class HashMap<T> {
         hash: string;
         value: T;
     }>;
-}
-
-declare class HashSet {
-    private inner;
-    constructor();
-    insert(hash: string): void;
-    remove(hash: string): void;
-    contains(hash: string): boolean;
 }
 
 declare namespace CoreExtensions {
@@ -108,16 +111,29 @@ declare class IdGen {
     next(): number;
 }
 
+type Vec2DJson = {
+    x: number;
+    y: number;
+};
+
+type AlRect2DJson = {
+    center: Vec2DJson;
+    width: number;
+    height: number;
+};
+
 declare class Vec2D {
     x: number;
     y: number;
     constructor(x: number, y: number);
     static zero(): Vec2D;
+    static from_json(json: Vec2DJson): Vec2D;
     clone(): Vec2D;
     shift_to(target: Vec2D): Vec2D;
     norm(): number;
     plus(other: Vec2D): Vec2D;
     flip_y(): Vec2D;
+    to_json(): Vec2DJson;
 }
 
 declare class AlRect2D {
@@ -125,6 +141,8 @@ declare class AlRect2D {
     width: number;
     height: number;
     constructor(center: Vec2D, width: number, height: number);
+    static from_json(json: AlRect2DJson): AlRect2D;
+    to_json(): AlRect2DJson;
 }
 
 declare class UiAlRect {
@@ -211,4 +229,4 @@ declare class WebWorker<Input, Output> {
     run(input: Input): Promise<Output>;
 }
 
-export { AlRect2D, Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UiAlRect, UniqueHashGenerator, Vec2D, WebWorker, exaustive_switch, sleep };
+export { AlRect2D, type AlRect2DJson, Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UiAlRect, UniqueHashGenerator, Vec2D, type Vec2DJson, WebWorker, exaustive_switch, sleep };
