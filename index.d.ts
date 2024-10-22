@@ -37,6 +37,10 @@ declare class HashMap<T> {
     keys(): string[];
     contains_hash(hash: string): boolean;
     get(hash: string): Opt<T>;
+    iter(): Generator<{
+        hash: string;
+        value: T;
+    }>;
     to_list(): List<{
         hash: string;
         value: T;

@@ -129,6 +129,11 @@ class HashMap {
             return Opt.none();
         }
     }
+    *iter() {
+        for (let hash of this.keys()) {
+            yield { hash, value: this.inner[hash] };
+        }
+    }
     to_list() {
         let output = new List();
         for (let hash of this.keys()) {
