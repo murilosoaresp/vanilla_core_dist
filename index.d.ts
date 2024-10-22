@@ -1,202 +1,54 @@
 declare class Opt<T> {
-    private hasValue;
-    private value;
+    private _has_value;
+    private _value;
     private constructor();
     static none<T>(): Opt<T>;
     static some<T>(value: T): Opt<T>;
     static of_value_or_null<T>(value: T | null): Opt<T>;
-    is_none(): boolean;
     is_some(): boolean;
+    is_none(): boolean;
     unwrap(): T | null;
-    value_or<G>(t: G): T | G;
+    value_or(t: T): T;
     value_or_throw(): T;
     value_unchecked(): T;
-    do_if_some<G>(fn: (t: T) => G): void;
-    do_if_some_async<G>(fn: (t: T) => Promise<G>): Promise<G | undefined>;
-    do<G>(filledAction: (t: T) => G, emptyAction: () => G): G;
-    do_async<G>(filledAction: (t: T) => Promise<G>, emptyAction: () => Promise<G>): Promise<G>;
-    transform<G>(action: (t: T) => G): Opt<G>;
-}
-
-declare class HashSet {
-    private innerSet;
-    constructor();
-    size(): number;
-    contains(str: string): boolean;
-    _add(str: string): void;
-    _remove(str: string): void;
-    to_list(): List<string>;
 }
 
 declare class List<T> {
-    private inner_array;
+    private inner;
     constructor();
     static of<T>(array: T[]): List<T>;
-    clone(inner_clone: (item: T) => T): List<T>;
-    clear(): void;
-    get_array(): T[];
     len(): number;
     is_valid_index(index: number): boolean;
-    last_index(): number;
     get(index: number): T;
-    get_last(): Opt<T>;
-    get_last_many(amount: number, order: "ascending" | "descending"): List<T>;
-    set(index: number, item: T): void;
-    _push(item: T): void;
-    _push_all(list: List<T>): void;
-    _remove(index: number): void;
-    _pop(): Opt<T>;
-    _swap(index_a: number, index_b: number): void;
-    _swap_pop(index: number): Opt<T>;
-    range(start: number, end: number): List<T>;
-    _slice(start: number, end: number): List<T>;
+    push(value: T): void;
+    remove(index: number): void;
     iter(): Generator<T>;
-    enumerate(): Generator<{
-        index: number;
-        value: T;
-    }>;
-    map<G>(mapFn: (item: T, index: number) => G): List<G>;
-    map_async_all<G>(mapFn: (item: T, index: number) => Promise<G>): Promise<List<G>>;
-    to_hash_set(strFn: (x: T) => string): HashSet;
-    filter(fn: (item: T, index: number) => boolean): List<T>;
-    filter_map<G>(filter: (item: T, index: number) => boolean, map: (item: T, index: number) => G): List<G>;
-    for_each(fn: (item: T, index: number) => void): void;
-    /**
-     * sorts inplace
-     */
-    _sort(comparison: (a: T, b: T) => number): List<T>;
-    /**
-     * sorts inplace
-     */
-    _sort_by_str(fn: (item: T) => string): List<T>;
-    /**
-     * sorts inplace
-     */
-    _sort_by_number(fn: (item: T) => number): List<T>;
-    to_hash_map(hashFn: (t: T) => string): HashMap<T>;
-    group_by(groupHashFn: (item: T) => string): HashMap<List<T>>;
-    zip<G>(other: List<G>): List<{
-        left: T;
-        right: Opt<G>;
-    }>;
-    find_first(conditionFn: (t: T) => boolean): Opt<T>;
-    find_first_with_index(conditionFn: (t: T) => boolean): Opt<[T, number]>;
-    aggregate<G>(g: G, agregation: (g: G, t: T) => G): G;
-    max(comp_fn: (a: T, b: T) => -1 | 0 | 1): Opt<T>;
-    max_by_number(fn: (a: T) => number): Opt<T>;
-    min(comp_fn: (a: T, b: T) => -1 | 0 | 1): Opt<T>;
-    min_by_number(fn: (a: T) => number): Opt<T>;
+    for_each(fn: (t: T) => void): void;
+    map<G>(fn: (t: T) => G): List<G>;
+    join(sep: string): string;
 }
 
 declare class HashMap<T> {
-    private size_;
-    private innerMap;
+    private inner;
     constructor();
-    static of<T>(obj: Record<string, T | undefined>): HashMap<T>;
-    clone(clone_inner: (t: T) => T): HashMap<T>;
-    size(): number;
-    get_inner_map(): Record<string, T | undefined>;
-    contains(hash: string): boolean;
+    len(): number;
+    insert(hash: string, value: T): void;
+    remove(hash: string): void;
+    keys(): string[];
+    contains_hash(hash: string): boolean;
     get(hash: string): Opt<T>;
-    get_unchecked(hash: string): T;
-    _put(hash: string, value: T): void;
-    _remove(hash: string): void;
-    iter(): Generator<{
+    to_list(): List<{
         hash: string;
         value: T;
     }>;
-    iter_values(): Generator<T>;
-    for_each(action: (value: T, hash: string) => void): void;
-    entries(): List<{
-        hash: string;
-        value: T;
-    }>;
-    keys(): List<string>;
-    gen_available_random_key(key_len: number): string;
-    transform<U>(transformFn: (t: T) => U): HashMap<U>;
 }
 
-declare class TreeHashMap<T> {
-    private root;
-    private value_map;
-    private parent_map;
-    private children_map;
+declare class HashSet {
+    private inner;
     constructor();
-    contains(key: string): boolean;
-    get_value(key: string): Opt<T>;
-    get_parent_key(key: string): Opt<string>;
-    get_root_hash(): Opt<string>;
-    _remove(key: string): void;
-    _put(key: string, value: T, parent: Opt<string>): void;
-    list_keys(): List<string>;
-    list_level_ordered(order: (a: T, b: T) => number): List<{
-        hash: string;
-        lv: number;
-    }>;
-    list_level_ordered_from(key: string, order: (a: T, b: T) => number, lv: number): List<{
-        hash: string;
-        lv: number;
-    }>;
-    list_children(key: string): List<{
-        key: string;
-        value: T;
-    }>;
-    list_children_recursive(key: string): List<{
-        key: string;
-        value: T;
-    }>;
-    list_subtree(key: string): List<{
-        key: string;
-        value: T;
-    }>;
-    list_parents(key: string): List<string>;
-    find_first_parent_such_that(key: string, criterion: (key: string, value: T) => boolean): Opt<{
-        display_key: string;
-        value: T;
-    }>;
-    iter_breadth(display_key: Opt<string>): Generator<{
-        key: string;
-        value: T;
-    }>;
-    private list_children_recursive_;
-    private list_level_ordered_from_;
-}
-
-declare class TreeHashMapMulti<T> {
-    private roots;
-    constructor();
-    contains(key: string): boolean;
-    get_value(key: string): Opt<T>;
-    get_parent_key(key: string): Opt<string>;
-    _remove(key: string): void;
-    _put(key: string, value: T, parent_opt: Opt<string>): void;
-    list_keys(): List<string>;
-    list_level_ordered(order: (a: T, b: T) => number): List<{
-        hash: string;
-        lv: number;
-    }>;
-    list_level_ordered_from(key: string, order: (a: T, b: T) => number): List<unknown>;
-    list_children(key: string): List<{
-        key: string;
-        value: T;
-    }>;
-    list_children_recursive(key: string): List<{
-        key: string;
-        value: T;
-    }>;
-    list_subtree(key: string): List<{
-        key: string;
-        value: T;
-    }>;
-    list_parents(key: string): List<string>;
-    find_first_parent_such_that(key: string, criterion: (key: string, value: T) => boolean): Opt<{
-        display_key: string;
-        value: T;
-    }>;
-    iter_breadth(start_key_opt: Opt<string>): Generator<{
-        key: string;
-        value: T;
-    }>;
+    insert(hash: string): void;
+    remove(hash: string): void;
+    contains(hash: string): boolean;
 }
 
 declare namespace CoreExtensions {
@@ -249,7 +101,27 @@ declare global {
 declare class IdGen {
     private counter;
     constructor(start_at: number);
-    _next(): number;
+    next(): number;
+}
+
+declare class Vec2D {
+    x: number;
+    y: number;
+    constructor(x: number, y: number);
+    static zero(): Vec2D;
+    clone(): Vec2D;
+    shift_to(target: Vec2D): Vec2D;
+    norm(): number;
+    plus(other: Vec2D): Vec2D;
+}
+
+declare class Color {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+    constructor(r: number, g: number, b: number, a: number);
+    rgba_string(): string;
 }
 
 declare function exaustive_switch(_: never): never;
@@ -319,4 +191,4 @@ declare class WebWorker<Input, Output> {
     run(input: Input): Promise<Output>;
 }
 
-export { CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, TreeHashMap, TreeHashMapMulti, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
+export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, Vec2D, WebWorker, exaustive_switch, sleep };
