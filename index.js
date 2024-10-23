@@ -403,6 +403,12 @@ class Color {
         }
         return new Color(r, g, b, 1.0);
     }
+    mix(pct, other) {
+        let r = (pct * this.r) + ((1 - pct) * other.r);
+        let g = (pct * this.g) + ((1 - pct) * other.g);
+        let b = (pct * this.b) + ((1 - pct) * other.b);
+        return new Color(r, g, b, this.a);
+    }
     rgba_string() {
         return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
     }
