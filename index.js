@@ -336,6 +336,9 @@ class AlRect2D {
     static from_json(json) {
         return new AlRect2D(Vec2D.from_json(json.center), json.width, json.height);
     }
+    clone() {
+        return new AlRect2D(this.center.clone(), this.width, this.height);
+    }
     to_json() {
         return {
             center: this.center.to_json(),

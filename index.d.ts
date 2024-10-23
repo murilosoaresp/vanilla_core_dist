@@ -142,6 +142,7 @@ declare class AlRect2D {
     height: number;
     constructor(center: Vec2D, width: number, height: number);
     static from_json(json: AlRect2DJson): AlRect2D;
+    clone(): AlRect2D;
     to_json(): AlRect2DJson;
 }
 
