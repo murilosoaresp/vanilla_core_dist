@@ -386,7 +386,7 @@ class Color {
         let hex = hex_string.replace(/^#/, '');
         // Parse the hex string
         let r, g, b;
-        if (hex_string.length === 6) {
+        if (hex.length === 6) {
             // If 6 characters, split into pairs and parse as integers
             r = parseInt(hex.slice(0, 2), 16);
             g = parseInt(hex.slice(2, 4), 16);
