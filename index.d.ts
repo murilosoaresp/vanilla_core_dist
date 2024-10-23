@@ -162,6 +162,7 @@ declare class Color {
     a: number;
     constructor(r: number, g: number, b: number, a: number);
     static parse_hex_string(hex_string: string): Color;
+    with_alpha(alpha: number): Color;
     mix(pct: number, other: Color): Color;
     rgba_string(): string;
 }

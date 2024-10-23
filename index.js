@@ -403,6 +403,9 @@ class Color {
         }
         return new Color(r, g, b, 1.0);
     }
+    with_alpha(alpha) {
+        return new Color(this.r, this.g, this.b, alpha);
+    }
     mix(pct, other) {
         let r = (pct * this.r) + ((1 - pct) * other.r);
         let g = (pct * this.g) + ((1 - pct) * other.g);
