@@ -126,6 +126,14 @@ class List {
         this.for_each(t => output.insert(fn(t)));
         return output;
     }
+    find_first(fn) {
+        for (let value of this.iter()) {
+            if (fn(value)) {
+                return Opt.some(value);
+            }
+        }
+        return Opt.none();
+    }
     join(sep) {
         return this.inner.join(sep);
     }
@@ -372,6 +380,28 @@ class Color {
         this.g = g;
         this.b = b;
         this.a = a;
+    }
+    static parse_hex_string(hex_string) {
+        // Remove the hash at the start if it's there
+        let hex = hex_string.replace(/^#/, '');
+        // Parse the hex string
+        let r, g, b;
+        if (hex_string.length === 6) {
+            // If 6 characters, split into pairs and parse as integers
+            r = parseInt(hex.slice(0, 2), 16);
+            g = parseInt(hex.slice(2, 4), 16);
+            b = parseInt(hex.slice(4, 6), 16);
+        }
+        else if (hex.length === 3) {
+            // If 3 characters, treat it as shorthand (e.g., #ABC -> #AABBCC)
+            r = parseInt(hex[0] + hex[0], 16);
+            g = parseInt(hex[1] + hex[1], 16);
+            b = parseInt(hex[2] + hex[2], 16);
+        }
+        else {
+            throw new Error("Invalid hex color format");
+        }
+        return new Color(r, g, b, 1.0);
     }
     rgba_string() {
         return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;

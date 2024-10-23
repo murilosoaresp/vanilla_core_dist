@@ -36,6 +36,7 @@ declare class List<T> {
     map<G>(fn: (t: T) => G): List<G>;
     map_async_all<G>(fn: (t: T) => Promise<G>): Promise<List<G>>;
     to_hash_set(fn: (t: T) => string): HashSet;
+    find_first(fn: (t: T) => boolean): Opt<T>;
     join(sep: string): string;
 }
 
@@ -160,6 +161,7 @@ declare class Color {
     b: number;
     a: number;
     constructor(r: number, g: number, b: number, a: number);
+    static parse_hex_string(hex_string: string): Color;
     rgba_string(): string;
 }
 
