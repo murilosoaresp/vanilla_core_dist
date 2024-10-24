@@ -74,14 +74,10 @@ declare namespace NumberExtensions {
 }
 declare global {
     interface Number {
-        tol_equals(other: number): boolean;
-        delta_equals(other: number, delta: number): boolean;
         min(other: number): number;
         max(other: number): number;
         abs(): number;
         sqrt(): number;
-        to_px(): number;
-        to_cm(): number;
     }
 }
 
@@ -110,49 +106,6 @@ declare class IdGen {
     private counter;
     constructor(start_at: number);
     next(): number;
-}
-
-type Vec2DJson = {
-    x: number;
-    y: number;
-};
-
-type AlRect2DJson = {
-    center: Vec2DJson;
-    width: number;
-    height: number;
-};
-
-declare class Vec2D {
-    x: number;
-    y: number;
-    constructor(x: number, y: number);
-    static zero(): Vec2D;
-    static from_json(json: Vec2DJson): Vec2D;
-    clone(): Vec2D;
-    shift_to(target: Vec2D): Vec2D;
-    norm(): number;
-    plus(other: Vec2D): Vec2D;
-    flip_y(): Vec2D;
-    to_json(): Vec2DJson;
-}
-
-declare class AlRect2D {
-    center: Vec2D;
-    width: number;
-    height: number;
-    constructor(center: Vec2D, width: number, height: number);
-    static from_json(json: AlRect2DJson): AlRect2D;
-    clone(): AlRect2D;
-    to_json(): AlRect2DJson;
-}
-
-declare class UiAlRect {
-    tl_vec: Vec2D;
-    width: number;
-    height: number;
-    constructor(tl_vec: Vec2D, width: number, height: number);
-    center(): Vec2D;
 }
 
 declare class Color {
@@ -234,4 +187,4 @@ declare class WebWorker<Input, Output> {
     run(input: Input): Promise<Output>;
 }
 
-export { AlRect2D, type AlRect2DJson, Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UiAlRect, UniqueHashGenerator, Vec2D, type Vec2DJson, WebWorker, exaustive_switch, sleep };
+export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };

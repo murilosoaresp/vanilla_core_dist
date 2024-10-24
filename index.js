@@ -192,13 +192,6 @@ var NumberExtensions;
     function load() { }
     NumberExtensions.load = load;
 })(NumberExtensions || (NumberExtensions = {}));
-const TOL = 0.000_000_1;
-Number.prototype.tol_equals = function (other) {
-    return (this - other).abs() <= TOL;
-};
-Number.prototype.delta_equals = function (other, delta) {
-    return (this - other).abs() < delta;
-};
 Number.prototype.min = function (other) {
     return Math.min(this, other);
 };
@@ -210,12 +203,6 @@ Number.prototype.abs = function () {
 };
 Number.prototype.sqrt = function () {
     return Math.sqrt(this);
-};
-Number.prototype.to_px = function () {
-    return this * 96.0 / 2.54;
-};
-Number.prototype.to_cm = function () {
-    return this * 2.54 / 96.0;
 };
 
 var StringExtensions;
@@ -293,80 +280,6 @@ class IdGen {
     next() {
         this.counter += 1;
         return this.counter;
-    }
-}
-
-class Vec2D {
-    x;
-    y;
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    static zero() {
-        return new Vec2D(0.0, 0.0);
-    }
-    static from_json(json) {
-        return new Vec2D(json.x, json.y);
-    }
-    clone() {
-        return new Vec2D(this.x, this.y);
-    }
-    shift_to(target) {
-        return new Vec2D(target.x - this.x, target.y - this.y);
-    }
-    norm() {
-        return (this.x * this.x + this.y * this.y).sqrt();
-    }
-    plus(other) {
-        return new Vec2D(this.x + other.x, this.y + other.y);
-    }
-    flip_y() {
-        return new Vec2D(this.x, -this.y);
-    }
-    to_json() {
-        return {
-            x: this.x,
-            y: this.y,
-        };
-    }
-}
-
-class AlRect2D {
-    center;
-    width;
-    height;
-    constructor(center, width, height) {
-        this.center = center;
-        this.width = width;
-        this.height = height;
-    }
-    static from_json(json) {
-        return new AlRect2D(Vec2D.from_json(json.center), json.width, json.height);
-    }
-    clone() {
-        return new AlRect2D(this.center.clone(), this.width, this.height);
-    }
-    to_json() {
-        return {
-            center: this.center.to_json(),
-            width: this.width,
-            height: this.height,
-        };
-    }
-}
-
-class UiAlRect {
-    tl_vec;
-    width;
-    height;
-    constructor(tl_vec, width, height) {
-        this.tl_vec = tl_vec;
-        this.width = width;
-        this.height = height;
-    }
-    center() {
-        return new Vec2D(this.tl_vec.x + 0.5 * this.width, this.tl_vec.y + 0.5 * this.height);
     }
 }
 
@@ -630,4 +543,4 @@ class WebWorker {
     }
 }
 
-export { AlRect2D, Color, CoreExtensions, DateExtensions, HashMap, HashSet, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UiAlRect, UniqueHashGenerator, Vec2D, WebWorker, exaustive_switch, sleep };
+export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
