@@ -11,6 +11,9 @@ declare class Opt<T> {
     value_or(t: T): T;
     value_or_throw(): T;
     value_unchecked(): T;
+    do_if_some(fn: (t: T) => void): void;
+    do_if_none(fn: () => void): void;
+    do<G>(fn_some: (t: T) => G, fn_none: () => G): G;
 }
 
 declare class HashSet {
@@ -30,11 +33,14 @@ declare class List<T> {
     is_valid_index(index: number): boolean;
     get(index: number): T;
     push(value: T): void;
+    append(other: List<T>): void;
     remove(index: number): void;
     iter(): Generator<T>;
     for_each(fn: (t: T) => void): void;
     map<G>(fn: (t: T) => G): List<G>;
     map_async_all<G>(fn: (t: T) => Promise<G>): Promise<List<G>>;
+    filter(fn: (t: T) => boolean): List<T>;
+    filter_map<G>(fn: (t: T) => Opt<G>): List<G>;
     to_hash_set(fn: (t: T) => string): HashSet;
     find_first(fn: (t: T) => boolean): Opt<T>;
     join(sep: string): string;
@@ -57,6 +63,39 @@ declare class HashMap<T> {
         hash: string;
         value: T;
     }>;
+}
+
+type HashTreeItem<T> = {
+    value: T;
+    parent_hash: Opt<string>;
+    children: List<string>;
+};
+
+declare class HashTree<T> {
+    private root_hash;
+    private value_map;
+    private parent_map;
+    private children_map;
+    constructor();
+    get(hash: string): Opt<T>;
+    get_item(hash: string): Opt<HashTreeItem<T>>;
+    contains(hash: string): boolean;
+    remove(hash: string): void;
+    insert(hash: string, parent_opt: Opt<string>, value: T): void;
+    depth_first_hashes(): List<string>;
+    private depth_first_keys_rec;
+    private remove_rec;
+}
+
+declare class MultiHashTree<T> {
+    private trees;
+    constructor();
+    get(hash: string): Opt<T>;
+    get_item(hash: string): Opt<HashTreeItem<T>>;
+    contains(hash: string): boolean;
+    remove(hash: string): void;
+    insert(hash: string, parent_opt: Opt<string>, value: T): void;
+    depth_first_hashes(): List<string>;
 }
 
 declare namespace CoreExtensions {
@@ -187,4 +226,4 @@ declare class WebWorker<Input, Output> {
     run(input: Input): Promise<Output>;
 }
 
-export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, type IPromiseSchedulerJob, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
+export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, HashTree, type HashTreeItem, type IPromiseSchedulerJob, IdGen, List, Log, MultiHashTree, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };

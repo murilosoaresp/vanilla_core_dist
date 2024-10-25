@@ -50,6 +50,24 @@ class Opt {
     value_unchecked() {
         return this._value;
     }
+    do_if_some(fn) {
+        if (this.is_some()) {
+            fn(this.value_unchecked());
+        }
+    }
+    do_if_none(fn) {
+        if (this.is_none()) {
+            fn();
+        }
+    }
+    do(fn_some, fn_none) {
+        if (this.is_some()) {
+            return fn_some(this.value_unchecked());
+        }
+        else {
+            return fn_none();
+        }
+    }
 }
 
 class HashSet {
@@ -93,6 +111,11 @@ class List {
     push(value) {
         this.inner.push(value);
     }
+    append(other) {
+        for (let t of other.iter()) {
+            this.push(t);
+        }
+    }
     remove(index) {
         this.inner.slice(index, 1);
     }
@@ -120,6 +143,25 @@ class List {
         }
         let promise_all = await Promise.all(output.inner);
         return List.of(promise_all);
+    }
+    filter(fn) {
+        let output = new List();
+        for (let t of this.iter()) {
+            if (fn(t)) {
+                output.push(t);
+            }
+        }
+        return output;
+    }
+    filter_map(fn) {
+        let output = new List();
+        for (let t of this.iter()) {
+            let g_opt = fn(t);
+            if (g_opt.is_some()) {
+                output.push(g_opt.value_unchecked());
+            }
+        }
+        return output;
     }
     to_hash_set(fn) {
         let output = new HashSet();
@@ -176,6 +218,163 @@ class HashMap {
         let output = new List();
         for (let hash of this.keys()) {
             output.push({ hash, value: this.inner[hash] });
+        }
+        return output;
+    }
+}
+
+class HashTree {
+    root_hash;
+    value_map;
+    parent_map;
+    children_map;
+    constructor() {
+        this.root_hash = Opt.none();
+        this.value_map = new HashMap();
+        this.parent_map = new HashMap();
+        this.children_map = new HashMap();
+    }
+    get(hash) {
+        return this.value_map.get(hash);
+    }
+    get_item(hash) {
+        if (this.contains(hash)) {
+            let item = {
+                value: this.get(hash).value_unchecked(),
+                parent_hash: this.parent_map.get(hash).value_unchecked(),
+                children: this.children_map.get(hash).value_unchecked(),
+            };
+            return Opt.some(item);
+        }
+        else {
+            return Opt.none();
+        }
+    }
+    contains(hash) {
+        return this.value_map.contains_hash(hash);
+    }
+    remove(hash) {
+        // checks if contains hash to remove
+        if (this.contains(hash) === false) {
+            return;
+        }
+        // remove hash from parent if children has one
+        let parent_hash_opt = this.parent_map.get(hash).value_unchecked();
+        if (parent_hash_opt.is_some()) {
+            let parent_hash = parent_hash_opt.value_unchecked();
+            let parent_children_list = this.children_map.get(parent_hash).value_unchecked();
+            let filtered_parent_list = parent_children_list.filter(child_hash => child_hash !== hash);
+            this.children_map.insert(parent_hash, filtered_parent_list);
+        }
+        // remove item
+        this.remove_rec(hash);
+        // if is root change root to none
+        if (this.root_hash.is_some() && hash === this.root_hash.value_unchecked()) {
+            this.root_hash = Opt.none();
+        }
+    }
+    insert(hash, parent_opt, value) {
+        // cehck if params are valid
+        if (this.contains(hash)) {
+            throw new Error();
+        }
+        if (parent_opt.is_none() && this.root_hash.is_some()) {
+            throw new Error();
+        }
+        if (parent_opt.is_some()
+            && this.value_map.contains_hash(parent_opt.value_unchecked()) === false) {
+            throw new Error();
+        }
+        // insert value and start children list
+        this.value_map.insert(hash, value);
+        this.children_map.insert(hash, new List());
+        this.parent_map.insert(hash, parent_opt);
+        if (parent_opt.is_some()) {
+            let parent_hash = parent_opt.value_unchecked();
+            this.children_map.get(parent_hash).value_unchecked().push(hash);
+        }
+    }
+    depth_first_hashes() {
+        let output = new List();
+        if (this.root_hash.is_some()) {
+            let root_hash = this.root_hash.value_unchecked();
+            this.depth_first_keys_rec(root_hash, output);
+        }
+        return output;
+    }
+    depth_first_keys_rec(hash, output) {
+        output.push(hash);
+        let children = this.children_map.get(hash).value_unchecked();
+        for (let child_hash of children.iter()) {
+            this.depth_first_keys_rec(child_hash, output);
+        }
+    }
+    remove_rec(hash) {
+        let children = this.children_map.get(hash).value_or_throw();
+        for (let child of children.iter()) {
+            this.remove_rec(child);
+        }
+        this.value_map.remove(hash);
+        this.parent_map.remove(hash);
+        this.children_map.remove(hash);
+    }
+}
+
+class MultiHashTree {
+    trees;
+    constructor() {
+        this.trees = new List();
+    }
+    get(hash) {
+        for (let tree of this.trees.iter()) {
+            if (tree.contains(hash)) {
+                return tree.get(hash);
+            }
+        }
+        return Opt.none();
+    }
+    get_item(hash) {
+        for (let tree of this.trees.iter()) {
+            if (tree.contains(hash)) {
+                return tree.get_item(hash);
+            }
+        }
+        return Opt.none();
+    }
+    contains(hash) {
+        for (let tree of this.trees.iter()) {
+            if (tree.contains(hash)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    remove(hash) {
+        for (let tree of this.trees.iter()) {
+            if (tree.contains(hash)) {
+                tree.remove(hash);
+            }
+        }
+    }
+    insert(hash, parent_opt, value) {
+        if (parent_opt.is_none()) {
+            let tree = new HashTree();
+            tree.insert(hash, Opt.none(), value);
+            this.trees.push(tree);
+        }
+        else {
+            let parent_hash = parent_opt.value_unchecked();
+            for (let tree of this.trees.iter()) {
+                if (tree.contains(parent_hash)) {
+                    tree.insert(hash, parent_opt, value);
+                }
+            }
+        }
+    }
+    depth_first_hashes() {
+        let output = new List();
+        for (let tree of this.trees.iter()) {
+            output.append(tree.depth_first_hashes());
         }
         return output;
     }
@@ -543,4 +742,4 @@ class WebWorker {
     }
 }
 
-export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, IdGen, List, Log, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
+export { Color, CoreExtensions, DateExtensions, HashMap, HashSet, HashTree, IdGen, List, Log, MultiHashTree, NumberExtensions, Opt, PathUtils, PromiseScheduler, Random, Result, SimplePromiseScheduler, StringExtensions, UniqueHashGenerator, WebWorker, exaustive_switch, sleep };
